@@ -5,11 +5,7 @@ import {ExpenseForm} from './components/ExpenseForm'
 import {Alert} from './components/Alert'
 import uuid from 'uuid/v4'
 
-const initialExpenses =[
-  {id: uuid(), charge:'rent', amount:1600},
-  {id: uuid(), charge:'cart payment', amount:400},
-  {id: uuid(), charge:'credit card bill', amount:1200}
-];
+const initialExpenses =[];
 
 
 function App() {
@@ -24,6 +20,7 @@ function App() {
    const [alert, setAlert] = useState({show: false});
    //edit
    const [edit, setEdit] = useState(false);
+   const [editId, setEditId]= useState('');
 /// ************** functionality ********************************
 // handle charge
 const handleCharge =e => {
@@ -39,16 +36,18 @@ const handleAmount =e => {
    setAlert({show: true, type, text});
    setTimeout(()=> {
      setAlert({show: false})   
-   },3000)
+   },2000)
  }
  // clear all expenses
  const clearExpenses =() => {
    setExpenses([]);
+   handleAlert({type: 'danger', text: 'All expenses succefully deleted'})
  }
  // delete single expense
  const deleteSingleExpense =(id) => {
   const tempExpenses= expenses.filter(item=> item.id !== id);
     setExpenses(tempExpenses);
+    handleAlert({type:'danger', text:'Selected item deleted'})
  }
  // handleEdit
  const handleEdit =(id) => {
@@ -56,15 +55,28 @@ const handleAmount =e => {
    setCharge(tempExpense.charge);
    setAmount(tempExpense.amount);
    setEdit(true);
+   setEditId(id);
  }
  const handleSubmit =e=> {
    e.preventDefault();
    if (charge !== '' && amount >0){
-        const singleExpense = {id: uuid(), charge, amount}
+     if (edit === true){
+        const editItem = expenses.find(item => item.id === editId);
+        const editExpense= {...editItem, charge, amount}
+        const tempExpenses=expenses.filter(item=> item.id !== editId);
+        setExpenses([...tempExpenses, editExpense])
+        setCharge('');
+        setAmount('');
+        setEdit(false);
+        handleAlert({type:'success', text:'Succefully edited item'})
+     }else{
+       const singleExpense = {id: uuid(), charge, amount}
         setExpenses([...expenses, singleExpense])
         setCharge('');
         setAmount('');
         handleAlert({type: 'success', text:'item added'})
+     }
+        
    }
    else{
      handleAlert({type:'danger', 

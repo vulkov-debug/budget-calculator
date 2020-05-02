@@ -10,7 +10,8 @@ export const ExpenseItem = ({expense, deleteSingleExpense, handleEdit}) => {
                <span className='amount'>$ {amount}</span>
            </div>
            <div>
-               <button className="edit-btn" aria-label='edit button' onClick={()=> handleEdit(id)}><MdEdit/></button>
+               <button className="edit-btn" aria-label='edit button' 
+               onClick={()=> handleEdit(id)}><MdEdit/></button>
                <button className="clear-btn" aria-label='delete button' 
                onClick={()=>deleteSingleExpense(id)}><MdDelete/></button>
            </div>
