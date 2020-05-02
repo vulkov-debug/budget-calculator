@@ -1,13 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 import {ExpenseList} from './components/ExpenseList'
 import {ExpenseForm} from './components/ExpenseForm'
 import {Alert} from './components/Alert'
 import uuid from 'uuid/v4'
 
-const initialExpenses =[];
+// const initialExpenses =[];
 
-
+const initialExpenses = localStorage.getItem('expenses')? 
+JSON.parse(localStorage.getItem('expenses')) :[];
 function App() {
   /// ************** state values ********************************
   // all expenses, add expense
@@ -21,6 +22,13 @@ function App() {
    //edit
    const [edit, setEdit] = useState(false);
    const [editId, setEditId]= useState('');
+
+useEffect(()=> {
+  console.log('we called useEffect');
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  
+},[expenses])
+
 /// ************** functionality ********************************
 // handle charge
 const handleCharge =e => {
@@ -61,12 +69,15 @@ const handleAmount =e => {
    e.preventDefault();
    if (charge !== '' && amount >0){
      if (edit === true){
-        const editItem = expenses.find(item => item.id === editId);
-        const editExpense= {...editItem, charge, amount}
-        const tempExpenses=expenses.filter(item=> item.id !== editId);
-        setExpenses([...tempExpenses, editExpense])
-        setCharge('');
-        setAmount('');
+        // const editItem = expenses.find(item => item.id === editId);
+        // const editExpense= {...editItem, charge, amount}
+        // const tempExpenses=expenses.filter(item=> item.id !== editId);
+        const tempExpenses= expenses.map(item => {
+          return item.id === editId ? {...item, charge, amount} : item
+        })
+        setExpenses(tempExpenses)
+        // setCharge('');
+        // setAmount('');
         setEdit(false);
         handleAlert({type:'success', text:'Succefully edited item'})
      }else{
